@@ -42,7 +42,7 @@ public class VertXClient {
         buffer.appendInt(protocol.getBodyLength());
         buffer.appendBytes(byteArrayOutputStream.toByteArray());
 
-        webClient.post(8080, "127.0.0.1", "/")
+        webClient.post(8060, "127.0.0.1", "/")
                 .sendBuffer(buffer, resp -> {
                     if (resp.succeeded()) {
                         HttpResponse<Buffer> result = resp.result();
