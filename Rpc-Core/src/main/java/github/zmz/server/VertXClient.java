@@ -1,7 +1,7 @@
 package github.zmz.server;
 
 import github.zmz.domain.User;
-import github.zmz.protocol.RpcProtocol;
+import github.zmz.protocol.BaseProtocol;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferImpl;
@@ -23,8 +23,8 @@ public class VertXClient {
         WebClient webClient = WebClient.create(vertx);
 
         // 协议
-        RpcProtocol<User> protocol =
-                RpcProtocol.<User>builder()
+        BaseProtocol<User> protocol =
+                BaseProtocol.<User>builder()
                         .version((byte) 1)
                         .timestamp(new Date().getTime())
                         .bodyLength(100)
