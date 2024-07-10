@@ -1,31 +1,11 @@
 package github.zmz.protocol;
 
 import lombok.Builder;
-import lombok.Data;
 
-@Data
+/**
+ * @author zmz
+ * @create 2024-07-10
+ */
 @Builder
-public class RpcProtocol<T> {
-
-    /**
-     * 版本号
-     */
-    private Byte version;
-
-    /**
-     * 时间戳
-     */
-    private Long timestamp;
-
-    /**
-     * 请求体长度
-     */
-    private Integer bodyLength;
-
-    /**
-     * 携带的数据
-     */
-    private T data;
-
-
+public class RpcProtocol extends BaseProtocol<RpcData> {
 }
