@@ -1,7 +1,8 @@
 package github.zmz.server;
 
-import github.zmz.domain.User;
 import github.zmz.protocol.BaseProtocol;
+import github.zmz.protocol.RpcData;
+import github.zmz.service.UserService;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferImpl;
@@ -12,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class VertXClient {
@@ -22,14 +22,16 @@ public class VertXClient {
 
         WebClient webClient = WebClient.create(vertx);
 
+        // 传输的数据
+        RpcData<UserService> rpcData = new RpcData<>();
+        rpcData.setServiceType(UserService.class);
+
         // 协议
-        BaseProtocol<User> protocol =
-                BaseProtocol.<User>builder()
-                        .version((byte) 1)
-                        .timestamp(new Date().getTime())
-                        .bodyLength(100)
-                        .data(new User("苏锐", 28, new BigDecimal(100000)))
-                        .build();
+        BaseProtocol<UserService> protocol = new BaseProtocol<>();
+        protocol.setVersion((byte) 1);
+        protocol.setTimestamp(new Date().getTime());
+        protocol.setBodyLength(100);
+        protocol.setData(rpcData);
 
         // 序列化
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

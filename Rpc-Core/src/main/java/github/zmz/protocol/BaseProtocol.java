@@ -1,10 +1,10 @@
 package github.zmz.protocol;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class BaseProtocol<T> {
 
     /**
@@ -25,7 +25,7 @@ public class BaseProtocol<T> {
     /**
      * 携带的数据
      */
-    private T data;
+    private RpcData<T> data;
 
 
 }
