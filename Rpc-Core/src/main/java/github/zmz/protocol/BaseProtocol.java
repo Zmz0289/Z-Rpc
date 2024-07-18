@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BaseProtocol<T> {
+public class BaseProtocol {
 
     /**
      * 版本号
@@ -25,7 +25,7 @@ public class BaseProtocol<T> {
     /**
      * 携带的数据
      */
-    private RpcData<T> data;
+    private RpcData data;
 
 
 }

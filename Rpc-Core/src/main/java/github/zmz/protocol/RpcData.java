@@ -11,21 +11,33 @@ import java.io.Serializable;
  * @create 2024-07-10
  */
 @Data
-public class RpcData<T> implements Serializable {
+public class RpcData implements Serializable {
+
+    private static final long serialVersionUID = -684979447075466771L;
 
     /**
-     * 调用的服务类型
+     * 调用的服务名称
      */
-    private Class<T> serviceType;
+    private String serviceName;
 
-//    /**
-//     * 调用的服务名称
-//     */
-//    private String serviceName;
+    /**
+     * 调用的服务的全路径类名
+     */
+    private String fullName;
+
+    /**
+     * 调用的方法名称
+     */
+    private String methodName;
+
+    /**
+     * 方法形参
+     */
+    private Object[] args;
 
     /**
      * 数据（响应）
      */
-    private T data;
+    private Object data;
 
 }

@@ -3,14 +3,19 @@ package github.zmz.server;
 import github.zmz.protocol.BaseProtocol;
 import github.zmz.protocol.RpcData;
 import github.zmz.service.UserService;
-import github.zmz.service.impl.NormalUserServiceImpl;
+import github.zmz.utils.ClassUtil;
 import io.vertx.core.Handler;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.buffer.impl.BufferImpl;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 自定义的 http 请求处理器，在此处接收请求并处理响应返回
@@ -39,24 +44,71 @@ public class CustomHttpHandler implements Handler<HttpServerRequest> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println("o.getClass() = " + o.getClass());
-                System.out.println("o = " + o);
 
                 RpcData rpcData = (RpcData) o;
-                Class serviceType = rpcData.getServiceType();
+
+                String fullName = rpcData.getFullName();
+                String methodName = rpcData.getMethodName();
+                Object[] args = rpcData.getArgs();
+
+                Class<?> aClass = null;
+                try {
+                    aClass = Class.forName(fullName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
-                System.out.println("serviceType.getName() = " + serviceType.getName());
+                List<Class> allClassByInterface = ClassUtil.getAllClassByInterface(aClass);
+                Class aClass1 = allClassByInterface.get(1);
 
-                // 静态创建
-                UserService userService = new NormalUserServiceImpl();
+                UserService userService = null;
+                try {
+                    userService = (UserService) aClass1.newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                BaseProtocol<UserService> baseProtocol = new BaseProtocol<>();
-                baseProtocol.setVersion((byte) 1);
-                baseProtocol.setTimestamp(new Date().getTime());
-//                baseProtocol.setData();
+                List<? extends Class<?>> classes = Arrays.stream(args).map(Object::getClass).collect(Collectors.toList());
 
-                req.response().send(buffer);
+                Object invoke = null;
+                try {
+                    Method declaredMethod = aClass1.getDeclaredMethod(methodName, classes.toArray(new Class[0]));
+
+                    invoke = declaredMethod.invoke(userService, args);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("invoke = " + invoke);
+
+
+                // 响应
+                BaseProtocol protocol = new BaseProtocol();
+                protocol.setVersion((byte) 1);
+                protocol.setTimestamp(new Date().getTime());
+                protocol.setBodyLength(100);
+
+                rpcData.setData(invoke);
+                protocol.setData(rpcData);
+
+                // 序列化
+                ByteArrayOutputStream byteArrayOutputStream = null;
+                try {
+                    byteArrayOutputStream = new ByteArrayOutputStream();
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+                    objectOutputStream.writeObject(protocol.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Buffer responseBuffer = new BufferImpl();
+                responseBuffer.appendByte(protocol.getVersion());
+                responseBuffer.appendLong(protocol.getTimestamp());
+                responseBuffer.appendInt(protocol.getBodyLength());
+                responseBuffer.appendBytes(byteArrayOutputStream.toByteArray());
+
+                req.response().send(responseBuffer);
             });
         }
     }

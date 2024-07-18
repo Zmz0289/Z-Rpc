@@ -2,7 +2,6 @@ package github.zmz.server;
 
 import github.zmz.protocol.BaseProtocol;
 import github.zmz.protocol.RpcData;
-import github.zmz.service.UserService;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferImpl;
@@ -23,11 +22,15 @@ public class VertXClient {
         WebClient webClient = WebClient.create(vertx);
 
         // 传输的数据
-        RpcData<UserService> rpcData = new RpcData<>();
-        rpcData.setServiceType(UserService.class);
+        RpcData rpcData = new RpcData();
+//        rpcData.setServiceType(UserService.class);
+        rpcData.setServiceName("userService");
+        rpcData.setMethodName("get");
+        rpcData.setArgs(new Object[]{});
+        rpcData.setData(null);
 
         // 协议
-        BaseProtocol<UserService> protocol = new BaseProtocol<>();
+        BaseProtocol protocol = new BaseProtocol();
         protocol.setVersion((byte) 1);
         protocol.setTimestamp(new Date().getTime());
         protocol.setBodyLength(100);
