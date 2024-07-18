@@ -18,7 +18,7 @@ public class ClassUtil {
 
     public static void main(String[] args) {
 
-        List<Class> allClassByInterface = getAllClassByInterface(UserService.class);
+        List<Class<?>> allClassByInterface = getAllClassByInterface(UserService.class);
 
         System.out.println("allClassByInterface = " + allClassByInterface);
 
@@ -26,12 +26,12 @@ public class ClassUtil {
 
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <T> List<Class> getAllClassByInterface(Class clazz) {
-        ArrayList<Class> list = new ArrayList<>();
+    public static List<Class<?>> getAllClassByInterface(Class<?> clazz) {
+        ArrayList<Class<?>> list = new ArrayList<>();
         // 判断是否是一个接口
         if (clazz.isInterface()) {
             try {
-                ArrayList<Class> allClass = getAllClass(clazz.getPackage().getName());
+                ArrayList<Class<?>> allClass = getAllClass(clazz.getPackage().getName());
                 // 循环判断路径下的所有类是否实现了指定的接口
                 for (int i = 0; i < allClass.size(); i++) {
                     if (clazz.isAssignableFrom(allClass.get(i))) {
@@ -52,8 +52,8 @@ public class ClassUtil {
      * 从一个指定路径下查找所有的类
      */
     @SuppressWarnings("rawtypes")
-    private static ArrayList<Class> getAllClass(String packageName) {
-        ArrayList<Class> list = new ArrayList<>();
+    private static ArrayList<Class<?>> getAllClass(String packageName) {
+        ArrayList<Class<?>> list = new ArrayList<>();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = packageName.replace('.', '/');
         try {
@@ -81,8 +81,8 @@ public class ClassUtil {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    private static ArrayList<Class> findClass(File file, String packageName) {
-        ArrayList<Class> list = new ArrayList<>();
+    private static ArrayList<Class<?>> findClass(File file, String packageName) {
+        ArrayList<Class<?>> list = new ArrayList<>();
         if (!file.exists()) {
             return list;
         }
@@ -90,7 +90,7 @@ public class ClassUtil {
         for (File file2 : files) {
             if (file2.isDirectory()) {
                 assert !file2.getName().contains(".");//添加断言用于判断
-                ArrayList<Class> arrayList = findClass(file2, packageName + "." + file2.getName());
+                ArrayList<Class<?>> arrayList = findClass(file2, packageName + "." + file2.getName());
                 list.addAll(arrayList);
             } else if (file2.getName().endsWith(".class")) {
                 try {
