@@ -23,11 +23,9 @@ public class VertXClient {
 
         // 传输的数据
         RpcData rpcData = new RpcData();
-//        rpcData.setServiceType(UserService.class);
         rpcData.setServiceName("userService");
         rpcData.setMethodName("get");
-        rpcData.setArgs(new Object[]{});
-        rpcData.setData(null);
+        rpcData.setArgs(new Object[]{"123"});
 
         // 协议
         BaseProtocol protocol = new BaseProtocol();

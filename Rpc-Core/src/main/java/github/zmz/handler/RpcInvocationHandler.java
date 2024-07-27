@@ -39,7 +39,6 @@ public class RpcInvocationHandler implements InvocationHandler {
 
         // 传输的数据
         RpcData rpcData = new RpcData();
-        rpcData.setFullName(useService.getName());
         rpcData.setServiceName(useService.getSimpleName());
         rpcData.setMethodName(method.getName());
         rpcData.setArgs(args);

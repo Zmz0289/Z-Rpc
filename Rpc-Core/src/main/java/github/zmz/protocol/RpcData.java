@@ -21,11 +21,6 @@ public class RpcData implements Serializable {
     private String serviceName;
 
     /**
-     * 调用的服务的全路径类名
-     */
-    private String fullName;
-
-    /**
      * 调用的方法名称
      */
     private String methodName;
