@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>github.zmz</groupId>
-    <artifactId>Rpc-Demo-Customer</artifactId>
+    <artifactId>Rpc-Api</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -15,9 +15,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>github.zmz</groupId>
-            <artifactId>Rpc-Core</artifactId>
-            <version>1.0</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
         </dependency>
     </dependencies>
 

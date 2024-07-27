@@ -1,11 +1,11 @@
 package github.zmz.service.impl;
 
 import github.zmz.domain.User;
-import github.zmz.service.UserService;
+import github.zmz.service.RemoteUserService;
 
 import java.math.BigDecimal;
 
-public class RemoteUserServiceImpl implements UserService {
+public class RemoteUserServiceImpl implements RemoteUserService {
 
     @Override
     public User get(String name) {

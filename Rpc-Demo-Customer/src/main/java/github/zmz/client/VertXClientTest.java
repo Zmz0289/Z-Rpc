@@ -2,15 +2,15 @@ package github.zmz.client;
 
 import github.zmz.domain.User;
 import github.zmz.factory.ProxyFactory;
-import github.zmz.service.UserService;
+import github.zmz.service.RemoteUserService;
 
 public class VertXClientTest {
 
     public static void main(String[] args) {
 
-        UserService userService = ProxyFactory.newInstance(UserService.class);
+        RemoteUserService remoteUserService = ProxyFactory.newInstance(RemoteUserService.class);
 
-        User user = userService.get("测试");
+        User user = remoteUserService.get("测试");
 
         System.out.println("user = " + user);
 

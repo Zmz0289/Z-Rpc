@@ -15,7 +15,7 @@ public class RegisterSelector {
         register.init();
 
         ServiceMetaInfo metaInfo = new ServiceMetaInfo();
-        metaInfo.setServiceName("UserService");
+        metaInfo.setServiceName("RemoteUserService");
         metaInfo.setServiceHost("127.0.0.1");
         metaInfo.setServicePort("8060");
         metaInfo.setServiceVersion("1");
