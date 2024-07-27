@@ -1,9 +1,12 @@
 package github.zmz.handler;
 
 import github.zmz.constant.Constants;
+import github.zmz.domain.ServiceMetaInfo;
 import github.zmz.domain.User;
 import github.zmz.factory.ProxyFactory;
 import github.zmz.protocol.RpcData;
+import github.zmz.register.Register;
+import github.zmz.register.RegisterSelector;
 import github.zmz.service.UserService;
 import github.zmz.utils.ProtocolHelper;
 import github.zmz.utils.VertxUtil;
@@ -15,6 +18,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -29,7 +34,6 @@ public class RpcInvocationHandler implements InvocationHandler {
         if (interfaces.length <= 0) {
             throw new RuntimeException("At least one interface must be inherited");
         }
-        Class<?> useService = interfaces[0];
 
         // 使用 CompletableFuture 异步接收，同步等待结果
         CompletableFuture<RpcData> completableFuture = new CompletableFuture<>();
@@ -39,14 +43,26 @@ public class RpcInvocationHandler implements InvocationHandler {
 
         // 传输的数据
         RpcData rpcData = new RpcData();
-        rpcData.setServiceName(useService.getSimpleName());
+        rpcData.setServiceName(interfaces[0].getSimpleName());
         rpcData.setMethodName(method.getName());
         rpcData.setArgs(args);
 
         // 协议
         Buffer buffer = ProtocolHelper.generateAndToBuffer(rpcData);
 
-        webClient.post(8060, "127.0.0.1", "/")
+        // 寻找具体服务
+        Register register = RegisterSelector.get();
+        List<ServiceMetaInfo> serviceMetaInfos = register.serviceDiscover(rpcData.getServiceName());
+        if (serviceMetaInfos == null || serviceMetaInfos.size() == 0) {
+            throw new RuntimeException("No specified service");
+        }
+
+        // 随机抽取一个服务进行请求
+        Collections.shuffle(serviceMetaInfos);
+        ServiceMetaInfo serviceMetaInfo = serviceMetaInfos.get(0);
+
+        // 发起请求
+        webClient.post(Integer.parseInt(serviceMetaInfo.getServicePort()), serviceMetaInfo.getServiceHost(), "/")
                 .sendBuffer(buffer, res -> {
                     HttpResponse<Buffer> result = res.result();
                     Buffer body = result.body();

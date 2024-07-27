@@ -23,7 +23,7 @@ public class VertXClient {
 
         // 传输的数据
         RpcData rpcData = new RpcData();
-        rpcData.setServiceName("userService");
+        rpcData.setServiceName("UserService");
         rpcData.setMethodName("get");
         rpcData.setArgs(new Object[]{"123"});
 

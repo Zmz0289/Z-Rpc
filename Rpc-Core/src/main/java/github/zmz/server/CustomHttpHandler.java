@@ -44,7 +44,7 @@ public class CustomHttpHandler implements Handler<HttpServerRequest> {
                     Object instance = ServiceLoader.getInstance(serviceName);
 
                     // 执行方法
-                    Method declaredMethod = instance.getClass().getDeclaredMethod(methodName, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new));
+                    Method declaredMethod = instance.getClass().getMethod(methodName, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new));
                     Object invoke = declaredMethod.invoke(instance, args);
 
                     // 响应数据

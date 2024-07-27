@@ -104,6 +104,7 @@ public class ServiceLoader {
         Class<?> clazz = serviceCacheMap.get(serviceName);
         if (clazz == null) {
             log.error("unregistered service, serviceName is {}", serviceName);
+            return (T) new Object();
         }
 
         try {
@@ -115,24 +116,6 @@ public class ServiceLoader {
         }
 
         return (T) new Object();
-    }
-
-
-    public static void main(String[] args) throws Exception {
-//        Class<?> serviceName = ServiceLoader.getClass("userService");
-//        Object instance = serviceName.newInstance();
-//
-//        Method method = serviceName.getDeclaredMethod("get", new Class[]{String.class});
-//
-//        Object invoke = method.invoke(instance, "123");
-//
-//        System.out.println("invoke = " + invoke);
-
-
-        Object userService = ServiceLoader.getInstance("userService");
-
-        System.out.println("userService = " + userService);
-
     }
 
 }
