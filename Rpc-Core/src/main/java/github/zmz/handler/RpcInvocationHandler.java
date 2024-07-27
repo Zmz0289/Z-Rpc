@@ -2,7 +2,7 @@ package github.zmz.handler;
 
 import github.zmz.constant.Constants;
 import github.zmz.domain.ServiceMetaInfo;
-import github.zmz.protocol.RpcData;
+import github.zmz.protocol.ProtocolData;
 import github.zmz.register.Register;
 import github.zmz.register.RegisterSelector;
 import github.zmz.utils.ProtocolHelper;
@@ -33,23 +33,23 @@ public class RpcInvocationHandler implements InvocationHandler {
         }
 
         // 使用 CompletableFuture 异步接收，同步等待结果
-        CompletableFuture<RpcData> completableFuture = new CompletableFuture<>();
+        CompletableFuture<ProtocolData> completableFuture = new CompletableFuture<>();
 
         // 在此处发起 Rpc 调用
         WebClient webClient = VertxUtil.newWebClient();
 
         // 传输的数据
-        RpcData rpcData = new RpcData();
-        rpcData.setServiceName(interfaces[0].getSimpleName());
-        rpcData.setMethodName(method.getName());
-        rpcData.setArgs(args);
+        ProtocolData protocolData = new ProtocolData();
+        protocolData.setServiceName(interfaces[0].getSimpleName());
+        protocolData.setMethodName(method.getName());
+        protocolData.setArgs(args);
 
         // 协议
-        Buffer buffer = ProtocolHelper.generateAndToBuffer(rpcData);
+        Buffer buffer = ProtocolHelper.generateAndToBuffer(protocolData);
 
         // 寻找具体服务
         Register register = RegisterSelector.get();
-        List<ServiceMetaInfo> serviceMetaInfos = register.serviceDiscover(rpcData.getServiceName());
+        List<ServiceMetaInfo> serviceMetaInfos = register.serviceDiscover(protocolData.getServiceName());
         if (serviceMetaInfos == null || serviceMetaInfos.size() == 0) {
             throw new RuntimeException("No specified service");
         }
@@ -70,14 +70,20 @@ public class RpcInvocationHandler implements InvocationHandler {
 
                     try {
                         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-                        completableFuture.complete((RpcData) objectInputStream.readObject());
+                        completableFuture.complete((ProtocolData) objectInputStream.readObject());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                 });
 
-        return completableFuture.get().getData();
+        // 远程调用执行时出现异常，抛出该异常
+        ProtocolData responseData = completableFuture.get();
+        if (responseData.getErrorOccurred()) {
+            throw responseData.getException();
+        }
+
+        return responseData.getData();
     }
 
 //    public static void main(String[] args) {

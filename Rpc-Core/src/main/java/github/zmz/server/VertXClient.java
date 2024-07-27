@@ -1,7 +1,9 @@
 package github.zmz.server;
 
-import github.zmz.protocol.BaseProtocol;
-import github.zmz.protocol.RpcData;
+import github.zmz.constant.Constants;
+import github.zmz.protocol.ProtocolData;
+import github.zmz.protocol.ProtocolHeader;
+import github.zmz.protocol.RpcProtocol;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferImpl;
@@ -23,17 +25,20 @@ public class VertXClient {
             WebClient webClient = WebClient.create(vertx);
 
             // 传输的数据
-            RpcData rpcData = new RpcData();
-            rpcData.setServiceName("UserService");
-            rpcData.setMethodName("get");
-            rpcData.setArgs(new Object[]{"123"});
+            ProtocolData protocolData = new ProtocolData();
+            protocolData.setServiceName("UserService");
+            protocolData.setMethodName("get");
+            protocolData.setArgs(new Object[]{"123"});
 
             // 协议
-            BaseProtocol protocol = new BaseProtocol();
-            protocol.setVersion((byte) 1);
-            protocol.setTimestamp(new Date().getTime());
-            protocol.setBodyLength(100);
-            protocol.setData(rpcData);
+            RpcProtocol protocol = new RpcProtocol();
+            ProtocolHeader header = new ProtocolHeader();
+
+            header.setVersion(Constants.currentProtocolVersion);
+            header.setTimestamp(new Date().getTime());
+            header.setBodyLength(100);
+            protocol.setHeader(header);
+            protocol.setData(protocolData);
 
             // 序列化
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -41,9 +46,9 @@ public class VertXClient {
             objectOutputStream.writeObject(protocol.getData());
 
             Buffer buffer = new BufferImpl();
-            buffer.appendByte(protocol.getVersion());
-            buffer.appendLong(protocol.getTimestamp());
-            buffer.appendInt(protocol.getBodyLength());
+            buffer.appendByte(protocol.getHeader().getVersion());
+            buffer.appendLong(protocol.getHeader().getTimestamp());
+            buffer.appendInt(protocol.getHeader().getBodyLength());
             buffer.appendBytes(byteArrayOutputStream.toByteArray());
 
             webClient.post(8060, "127.0.0.1", "/")

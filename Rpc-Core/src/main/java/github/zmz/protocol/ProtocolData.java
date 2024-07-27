@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @create 2024-07-10
  */
 @Data
-public class RpcData implements Serializable {
+public class ProtocolData implements Serializable {
 
     private static final long serialVersionUID = -684979447075466771L;
 
@@ -34,5 +34,15 @@ public class RpcData implements Serializable {
      * 数据（响应）
      */
     private Object data;
+
+    /**
+     * 是否发生错误（响应）
+     */
+    private Boolean errorOccurred = Boolean.FALSE;
+
+    /**
+     * 具体异常（响应）
+     */
+    private Throwable exception;
 
 }

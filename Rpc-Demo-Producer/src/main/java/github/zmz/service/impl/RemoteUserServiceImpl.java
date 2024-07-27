@@ -9,6 +9,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
     @Override
     public User get(String name) {
+        if ("error".equals(name)) {
+            throw new IndexOutOfBoundsException();
+        }
+
         System.out.println("name = " + name);
 
         User user = new User();

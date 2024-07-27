@@ -10,7 +10,7 @@ public class VertXClientTest {
 
         RemoteUserService remoteUserService = ProxyFactory.newInstance(RemoteUserService.class);
 
-        User user = remoteUserService.get("测试");
+        User user = remoteUserService.get("error");
 
         System.out.println("user = " + user);
 

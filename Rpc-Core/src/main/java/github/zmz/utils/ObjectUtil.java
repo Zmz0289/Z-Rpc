@@ -44,7 +44,6 @@ public class ObjectUtil {
         }
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(objectArr, 0, objectArr.length);
-//        ByteInputStream byteInputStream = new ByteInputStream(objectArr, objectArr.length);
 
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);

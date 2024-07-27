@@ -1,12 +1,9 @@
 package github.zmz.protocol;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class BaseProtocol {
-
+public class ProtocolHeader {
     /**
      * 版本号
      */
@@ -21,11 +18,4 @@ public class BaseProtocol {
      * 请求体长度
      */
     private Integer bodyLength;
-
-    /**
-     * 携带的数据
-     */
-    private RpcData data;
-
-
 }

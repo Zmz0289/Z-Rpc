@@ -1,8 +1,9 @@
 package github.zmz.utils;
 
 import github.zmz.constant.Constants;
-import github.zmz.protocol.BaseProtocol;
-import github.zmz.protocol.RpcData;
+import github.zmz.protocol.ProtocolData;
+import github.zmz.protocol.ProtocolHeader;
+import github.zmz.protocol.RpcProtocol;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferImpl;
 
@@ -10,12 +11,15 @@ import java.util.Date;
 
 public class ProtocolHelper {
 
-    public static BaseProtocol generate(RpcData rpcData, int bodyLength) {
-        BaseProtocol protocol = new BaseProtocol();
-        protocol.setVersion((byte) 1);
-        protocol.setTimestamp(new Date().getTime());
-        protocol.setBodyLength(bodyLength);
-        protocol.setData(rpcData);
+    public static RpcProtocol generate(ProtocolData protocolData, int bodyLength) {
+        RpcProtocol protocol = new RpcProtocol();
+        ProtocolHeader header = new ProtocolHeader();
+
+        header.setVersion(Constants.currentProtocolVersion);
+        header.setTimestamp(new Date().getTime());
+        header.setBodyLength(bodyLength);
+        protocol.setHeader(header);
+        protocol.setData(protocolData);
 
         return protocol;
     }
@@ -24,22 +28,25 @@ public class ProtocolHelper {
     /**
      * 生成基础协议并转换成 Buffer
      *
-     * @param rpcData 请求体数据
+     * @param protocolData 请求体数据
      * @return
      */
-    public static Buffer generateAndToBuffer(RpcData rpcData) {
-        byte[] serializeArr = ObjectUtil.serialize(rpcData);
+    public static Buffer generateAndToBuffer(ProtocolData protocolData) {
+        byte[] serializeArr = ObjectUtil.serialize(protocolData);
 
-        BaseProtocol protocol = new BaseProtocol();
-        protocol.setVersion(Constants.currentProtocolVersion);
-        protocol.setTimestamp(new Date().getTime());
-        protocol.setBodyLength(serializeArr.length);
-        protocol.setData(rpcData);
+        RpcProtocol protocol = new RpcProtocol();
+        ProtocolHeader header = new ProtocolHeader();
+
+        header.setVersion(Constants.currentProtocolVersion);
+        header.setTimestamp(new Date().getTime());
+        header.setBodyLength(serializeArr.length);
+        protocol.setHeader(header);
+        protocol.setData(protocolData);
 
         Buffer responseBuffer = new BufferImpl();
-        responseBuffer.appendByte(protocol.getVersion());
-        responseBuffer.appendLong(protocol.getTimestamp());
-        responseBuffer.appendInt(protocol.getBodyLength());
+        responseBuffer.appendByte(protocol.getHeader().getVersion());
+        responseBuffer.appendLong(protocol.getHeader().getTimestamp());
+        responseBuffer.appendInt(protocol.getHeader().getBodyLength());
         responseBuffer.appendBytes(serializeArr);
 
         return responseBuffer;

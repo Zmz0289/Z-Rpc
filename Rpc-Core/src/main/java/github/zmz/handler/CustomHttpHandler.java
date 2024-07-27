@@ -2,7 +2,7 @@ package github.zmz.handler;
 
 import github.zmz.constant.Constants;
 import github.zmz.loader.ServiceLoader;
-import github.zmz.protocol.RpcData;
+import github.zmz.protocol.ProtocolData;
 import github.zmz.utils.ObjectUtil;
 import github.zmz.utils.ProtocolHelper;
 import io.vertx.core.Handler;
@@ -11,6 +11,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -33,12 +34,12 @@ public class CustomHttpHandler implements Handler<HttpServerRequest> {
             req.handler(buffer -> {
                 byte[] bytes = buffer.getBytes(Constants.protocolHeaderLength, buffer.length());
 
-                RpcData rpcData = ObjectUtil.deSerialize(bytes, RpcData.class);
+                ProtocolData protocolData = ObjectUtil.deSerialize(bytes, ProtocolData.class);
 
                 // 请求信息
-                String serviceName = rpcData.getServiceName();
-                String methodName = rpcData.getMethodName();
-                Object[] args = rpcData.getArgs();
+                String serviceName = protocolData.getServiceName();
+                String methodName = protocolData.getMethodName();
+                Object[] args = protocolData.getArgs();
 
                 try {
                     Object instance = ServiceLoader.getInstance(serviceName);
@@ -48,13 +49,27 @@ public class CustomHttpHandler implements Handler<HttpServerRequest> {
                     Object invoke = declaredMethod.invoke(instance, args);
 
                     // 响应数据
-                    rpcData.setData(invoke);
+                    protocolData.setData(invoke);
                 } catch (Exception e) {
                     log.error("CustomHttpHandler#handle() has error occurred, msg = {}", e.getMessage(), e);
-                    rpcData.setData(null);
+                    protocolData.setData(null);
+                    protocolData.setErrorOccurred(Boolean.TRUE);
+
+                    // 获取具体异常（针对非受检异常和错误）
+                    if (e instanceof InvocationTargetException) {
+                        InvocationTargetException invocationTargetException = (InvocationTargetException) e;
+                        Throwable targetException = invocationTargetException.getTargetException();
+                        if (targetException instanceof RuntimeException || targetException instanceof Error) {
+                            protocolData.setException(targetException);
+                        }
+                    }
+
+                    if (protocolData.getException() == null) {
+                        protocolData.setException(e);
+                    }
                 }
 
-                Buffer responseBuffer = ProtocolHelper.generateAndToBuffer(rpcData);
+                Buffer responseBuffer = ProtocolHelper.generateAndToBuffer(protocolData);
                 req.response().send(responseBuffer);
             });
         }
