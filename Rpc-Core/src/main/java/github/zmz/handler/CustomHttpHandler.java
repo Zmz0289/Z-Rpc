@@ -1,4 +1,4 @@
-package github.zmz.server;
+package github.zmz.handler;
 
 import github.zmz.constant.Constants;
 import github.zmz.loader.ServiceLoader;

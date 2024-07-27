@@ -1,6 +1,5 @@
 package github.zmz.utils;
 
-import github.zmz.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -15,14 +14,6 @@ import java.util.List;
  */
 @Slf4j
 public class ClassUtil {
-
-    public static void main(String[] args) {
-
-        List<Class<?>> allClassByInterface = getAllClassByInterface(UserService.class);
-
-        System.out.println("allClassByInterface = " + allClassByInterface);
-
-    }
 
 
     @SuppressWarnings({"rawtypes", "unchecked"})

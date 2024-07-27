@@ -1,12 +1,12 @@
 package github.zmz.server;
 
+import github.zmz.handler.CustomHttpHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 
 public class VertXServer {
 
-    public static void main(String[] args) {
-
+    public static void start() {
         Vertx vertx = Vertx.vertx();
 
         //创建 httpServer
@@ -20,6 +20,5 @@ public class VertXServer {
                 System.out.println("Http server occured error " + res.cause());
             }
         });
-
     }
 }

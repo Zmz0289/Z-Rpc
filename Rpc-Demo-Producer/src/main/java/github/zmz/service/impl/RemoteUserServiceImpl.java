@@ -12,7 +12,7 @@ public class RemoteUserServiceImpl implements UserService {
         System.out.println("name = " + name);
 
         User user = new User();
-        user.setName("远程的user");
+        user.setName(name);
         user.setAge(88);
         user.setMoney(BigDecimal.ONE);
 

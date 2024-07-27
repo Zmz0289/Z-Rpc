@@ -2,12 +2,9 @@ package github.zmz.handler;
 
 import github.zmz.constant.Constants;
 import github.zmz.domain.ServiceMetaInfo;
-import github.zmz.domain.User;
-import github.zmz.factory.ProxyFactory;
 import github.zmz.protocol.RpcData;
 import github.zmz.register.Register;
 import github.zmz.register.RegisterSelector;
-import github.zmz.service.UserService;
 import github.zmz.utils.ProtocolHelper;
 import github.zmz.utils.VertxUtil;
 import io.vertx.core.buffer.Buffer;
@@ -83,13 +80,13 @@ public class RpcInvocationHandler implements InvocationHandler {
         return completableFuture.get().getData();
     }
 
-    public static void main(String[] args) {
-
-        UserService userService = ProxyFactory.newInstance(UserService.class);
-
-        User user = userService.get("123");
-
-        System.out.println("user = " + user);
-
-    }
+//    public static void main(String[] args) {
+//
+//        UserService userService = ProxyFactory.newInstance(UserService.class);
+//
+//        User user = userService.get("123");
+//
+//        System.out.println("user = " + user);
+//
+//    }
 }
