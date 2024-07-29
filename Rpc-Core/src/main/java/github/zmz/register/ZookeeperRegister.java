@@ -1,5 +1,6 @@
 package github.zmz.register;
 
+import github.zmz.delegate.ServiceMetaInfoDelegate;
 import github.zmz.domain.ServiceMetaInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -8,7 +9,6 @@ import org.apache.curator.retry.RetryForever;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.ServiceType;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import java.util.ArrayList;
@@ -23,17 +23,19 @@ public class ZookeeperRegister implements Register {
 
     private ServiceDiscovery<ServiceMetaInfo> serviceDiscovery;
 
-    String RPC_BASE_PATH = "/z-rpc/";
+    private final String RPC_BASE_PATH = "/z-rpc/";
+
+    private final String SERVICE_FLAG = "ZOOKEEPER";
 
 
     @Override
     public void init() {
         client = CuratorFrameworkFactory.builder()
                 .connectString("127.0.0.1:2181")
-//                .sessionTimeoutMs(20000)
-//                .connectionTimeoutMs(connectionTimeout)
+                .sessionTimeoutMs(20000)
+                .connectionTimeoutMs(20000)
                 // 权限认证
-                //.authorization(scheme,authId.getBytes(StandardCharsets.UTF_8))
+//                .authorization("digest", "user1:123456a".getBytes(StandardCharsets.UTF_8))
                 // 重试策略
                 .retryPolicy(new RetryForever(1000))
                 .build();
@@ -81,7 +83,9 @@ public class ZookeeperRegister implements Register {
     public List<ServiceMetaInfo> serviceDiscover(String serviceName) {
         Collection<ServiceInstance<ServiceMetaInfo>> instances = null;
         try {
-            instances = serviceDiscovery.queryForInstances(serviceName);
+            String serviceFullName = ServiceMetaInfoDelegate.getServiceName(getFlag(), serviceName);
+            instances = serviceDiscovery.queryForInstances(serviceFullName);
+
             return instances.stream().map(ServiceInstance::getPayload).collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,19 +96,23 @@ public class ZookeeperRegister implements Register {
 
 
     private ServiceInstance<ServiceMetaInfo> buildServiceInstance(ServiceMetaInfo serviceMetaInfo) {
-        String serviceAddress = serviceMetaInfo.getServiceHost() + ":" + serviceMetaInfo.getServicePort();
+        ServiceMetaInfoDelegate delegate = ServiceMetaInfoDelegate.getInstance(serviceMetaInfo);
         try {
             return ServiceInstance
                     .<ServiceMetaInfo>builder()
-                    .id(serviceAddress)
-                    .name(serviceMetaInfo.getServiceName())
-                    .address(serviceAddress)
+                    .id(delegate.getServiceId(serviceDiscover(serviceMetaInfo.getServiceName()).size() + 1))
+                    .name(delegate.getServiceName(getFlag()))
+                    .address(delegate.getServiceAddress())
+                    .port(delegate.getServicePort())
                     .payload(serviceMetaInfo)
-                    .serviceType(ServiceType.PERMANENT)
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
+    public String getFlag() {
+        return SERVICE_FLAG;
+    }
 }

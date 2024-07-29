@@ -1,5 +1,6 @@
 package github.zmz.register;
 
+import github.zmz.constant.Constants;
 import github.zmz.domain.ServiceMetaInfo;
 
 /**
@@ -18,7 +19,7 @@ public class RegisterSelector {
         metaInfo.setServiceName("RemoteUserService");
         metaInfo.setServiceHost("127.0.0.1");
         metaInfo.setServicePort("8060");
-        metaInfo.setServiceVersion("1");
+        metaInfo.setServiceVersion(Constants.ServiceInfo.serviceVersion);
 
         register.registerService(metaInfo);
     }

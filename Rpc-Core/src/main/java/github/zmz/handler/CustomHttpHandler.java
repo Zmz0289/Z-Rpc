@@ -32,7 +32,7 @@ public class CustomHttpHandler implements Handler<HttpServerRequest> {
             req.response().send("hello");
         } else if (method.equals(HttpMethod.POST)) {
             req.handler(buffer -> {
-                byte[] bytes = buffer.getBytes(Constants.protocolHeaderLength, buffer.length());
+                byte[] bytes = buffer.getBytes(Constants.Protocol.protocolHeaderLength, buffer.length());
 
                 ProtocolData protocolData = ObjectUtil.deSerialize(bytes, ProtocolData.class);
 

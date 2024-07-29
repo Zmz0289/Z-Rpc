@@ -15,7 +15,7 @@ public class ProtocolHelper {
         RpcProtocol protocol = new RpcProtocol();
         ProtocolHeader header = new ProtocolHeader();
 
-        header.setVersion(Constants.currentProtocolVersion);
+        header.setVersion(Constants.Protocol.currentProtocolVersion);
         header.setTimestamp(new Date().getTime());
         header.setBodyLength(bodyLength);
         protocol.setHeader(header);
@@ -37,7 +37,7 @@ public class ProtocolHelper {
         RpcProtocol protocol = new RpcProtocol();
         ProtocolHeader header = new ProtocolHeader();
 
-        header.setVersion(Constants.currentProtocolVersion);
+        header.setVersion(Constants.Protocol.currentProtocolVersion);
         header.setTimestamp(new Date().getTime());
         header.setBodyLength(serializeArr.length);
         protocol.setHeader(header);

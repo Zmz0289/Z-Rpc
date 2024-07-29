@@ -64,7 +64,7 @@ public class RpcInvocationHandler implements InvocationHandler {
                     HttpResponse<Buffer> result = res.result();
                     Buffer body = result.body();
 
-                    byte[] bytes = body.getBytes(Constants.protocolHeaderLength, body.length());
+                    byte[] bytes = body.getBytes(Constants.Protocol.protocolHeaderLength, body.length());
 
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
 

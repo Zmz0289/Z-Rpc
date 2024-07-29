@@ -34,7 +34,7 @@ public class VertXClient {
             RpcProtocol protocol = new RpcProtocol();
             ProtocolHeader header = new ProtocolHeader();
 
-            header.setVersion(Constants.currentProtocolVersion);
+            header.setVersion(Constants.Protocol.currentProtocolVersion);
             header.setTimestamp(new Date().getTime());
             header.setBodyLength(100);
             protocol.setHeader(header);

@@ -38,5 +38,10 @@ public interface Register {
      */
     List<ServiceMetaInfo> serviceDiscover(String serviceName);
 
+    /**
+     * 服务标志
+     */
+    String getFlag();
+
 
 }
