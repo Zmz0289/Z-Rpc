@@ -1,6 +1,7 @@
 package github.zmz.server;
 
 import github.zmz.handler.CustomHttpHandler;
+import github.zmz.register.RegisterSelector;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 
@@ -9,8 +10,11 @@ public class VertXServer {
     public static void start() {
         Vertx vertx = Vertx.vertx();
 
-        //创建 httpServer
+        // 创建 httpServer
         HttpServer server = vertx.createHttpServer().requestHandler(new CustomHttpHandler());
+
+        // 注册服务
+        RegisterSelector.register();
 
         //指定监听端口
         server.listen(8060, res -> {

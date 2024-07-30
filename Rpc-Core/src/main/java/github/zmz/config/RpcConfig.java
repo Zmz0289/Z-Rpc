@@ -1,6 +1,7 @@
 package github.zmz.config;
 
 import github.zmz.constant.Constants;
+import github.zmz.enums.RegisterEnum;
 import lombok.Data;
 
 /**
@@ -17,5 +18,9 @@ public class RpcConfig {
      */
     String serviceVersion = Constants.ServiceInfo.serviceVersion;
 
+    /**
+     * 注册中心配置
+     */
+    String registerConfigName = RegisterEnum.ZOOKEEPER.getName();
 
 }

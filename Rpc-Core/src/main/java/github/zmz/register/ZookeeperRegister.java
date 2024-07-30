@@ -1,11 +1,12 @@
 package github.zmz.register;
 
+import github.zmz.config.ZookeeperConfig;
 import github.zmz.delegate.ServiceMetaInfoDelegate;
 import github.zmz.domain.ServiceMetaInfo;
+import github.zmz.enums.RegisterEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryForever;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -25,19 +26,18 @@ public class ZookeeperRegister implements Register {
 
     private final String RPC_BASE_PATH = "/z-rpc/";
 
-    private final String SERVICE_FLAG = "ZOOKEEPER";
-
-
     @Override
     public void init() {
+        ZookeeperConfig config = (ZookeeperConfig) RegisterEnum.ZOOKEEPER.getRegisterConfig();
+
         client = CuratorFrameworkFactory.builder()
-                .connectString("127.0.0.1:2181")
-                .sessionTimeoutMs(20000)
-                .connectionTimeoutMs(20000)
+                .connectString(config.getAddr())
+                .sessionTimeoutMs(config.getSessionTimeoutMs())
+                .connectionTimeoutMs(config.getConnectionTimeoutMs())
                 // 权限认证
 //                .authorization("digest", "user1:123456a".getBytes(StandardCharsets.UTF_8))
                 // 重试策略
-                .retryPolicy(new RetryForever(1000))
+                .retryPolicy(config.getRetryPolicy())
                 .build();
 
         // 构建 serviceDiscovery 实例
@@ -113,6 +113,6 @@ public class ZookeeperRegister implements Register {
 
     @Override
     public String getFlag() {
-        return SERVICE_FLAG;
+        return RegisterEnum.ZOOKEEPER.getName();
     }
 }
