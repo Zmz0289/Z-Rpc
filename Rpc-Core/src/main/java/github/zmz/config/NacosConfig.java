@@ -10,7 +10,7 @@ public class NacosConfig implements RegisterConfig {
 
     private String host = "127.0.0.1";
 
-    private String port = "8828";
+    private String port = "8848";
 
     private String namespace = "public";
 

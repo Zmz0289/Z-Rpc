@@ -21,6 +21,6 @@ public class RpcConfig {
     /**
      * 注册中心配置
      */
-    String registerConfigName = RegisterEnum.ZOOKEEPER.getName();
+    String registerConfigName = RegisterEnum.NACOS.getName();
 
 }
