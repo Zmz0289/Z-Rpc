@@ -1,5 +1,6 @@
 package github.zmz.service.impl;
 
+import github.zmz.annotation.ZService;
 import github.zmz.domain.User;
 import github.zmz.service.RemoteUserService;
 

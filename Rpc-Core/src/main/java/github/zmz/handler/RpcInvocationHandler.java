@@ -51,7 +51,7 @@ public class RpcInvocationHandler implements InvocationHandler {
         Register register = RegisterSelector.get();
         List<ServiceMetaInfo> serviceMetaInfos = register.serviceDiscover(protocolData.getServiceName());
         if (serviceMetaInfos == null || serviceMetaInfos.size() == 0) {
-            throw new RuntimeException("No specified service");
+            throw new RuntimeException("No specified service: " + protocolData.getServiceName());
         }
 
         // 随机抽取一个服务进行请求
@@ -86,13 +86,4 @@ public class RpcInvocationHandler implements InvocationHandler {
         return responseData.getData();
     }
 
-//    public static void main(String[] args) {
-//
-//        UserService userService = ProxyFactory.newInstance(UserService.class);
-//
-//        User user = userService.get("123");
-//
-//        System.out.println("user = " + user);
-//
-//    }
 }
